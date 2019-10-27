@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CubeController : MonoBehaviour
 {
+    float x, y, z;
+    public int myX, myY;
+    public static bool activePlane;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,11 +21,38 @@ public class CubeController : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (Transportation.activeCube != null) // if none of the cubes have been interacted with yet, then don't turn the first cube white
+        x = 0.5f;
+        y = 0.5f;
+        z = 0.5f;
+        if (myX == Transportation.airplaneX && myY == Transportation.airplaneY) // if you click on the airplane...
         {
-            Transportation.activeCube.GetComponent<Renderer>().material.color = Color.white; // turn the last clicked cube white otherwise
+            if (activePlane)
+            {
+                activePlane = false;
+                Transportation.clickedCube.transform.localScale -= new Vector3(x, y, z);
+            }
+            else
+            {
+                activePlane = true;
+                Transportation.clickedCube.transform.localScale += new Vector3(x, y, z);
+            }
         }
-        gameObject.GetComponent<Renderer>().material.color = Color.red;
-        Transportation.activeCube = gameObject;
+        else // if you don't click on the airplane...
+        {
+            if (activePlane)
+            {
+                Transportation.clickedCube.GetComponent<Renderer>().material.color = Color.white;
+                Transportation.clickedCube.transform.localScale -= new Vector3(x, y, z);
+                Transportation.airplaneX = myX;
+                Transportation.airplaneY = myY;
+                Transportation.clickedCube = Transportation.grid[Transportation.airplaneX, Transportation.airplaneY];
+                Transportation.clickedCube.transform.localScale += new Vector3(x, y, z);
+            }
+        }
+        /*
+        //gameObject.GetComponent<Renderer>().material.color = Color.red;
+        transform.localScale += new Vector3(x, y, z);
+        Transportation.activePlane = gameObject;
+        */
     }
 }
