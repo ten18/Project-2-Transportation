@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class CubeController : MonoBehaviour
 {
-    float scaleX, scaleY, scaleZ;
+    public static float scaleX, scaleY, scaleZ;
     public int myX, myY;
     public static bool activePlane;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +19,7 @@ public class CubeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+  
     }
 
     void OnMouseDown()
@@ -28,27 +29,30 @@ public class CubeController : MonoBehaviour
             if (activePlane)
             {
                 activePlane = false;
-                Transportation.clickedCube.transform.localScale -= new Vector3(scaleX, scaleY, scaleZ);
+                Transportation.grid[Transportation.airplaneX,Transportation.airplaneY].transform.localScale -= new Vector3(scaleX, scaleY, scaleZ);
             }
             else
             {
                 activePlane = true;
-                Transportation.clickedCube.transform.localScale += new Vector3(scaleX, scaleY, scaleZ);
+                Transportation.grid[Transportation.airplaneX, Transportation.airplaneY].transform.localScale += new Vector3(scaleX, scaleY, scaleZ);
             }
         }
+
+        /* Teleporter Code
         else // if you don't click on the airplane...
         {
             if (activePlane)
             {
-                Transportation.clickedCube.GetComponent<Renderer>().material.color = Color.white;
+                Transportation.selectedCube.GetComponent<Renderer>().material.color = Color.white;
                 Transportation.depotCube.GetComponent<Renderer>().material.color = Color.black;
-                Transportation.clickedCube.transform.localScale -= new Vector3(scaleX, scaleY, scaleZ);
+                Transportation.selectedCube.transform.localScale -= new Vector3(scaleX, scaleY, scaleZ);
                 Transportation.airplaneX = myX;
                 Transportation.airplaneY = myY;
-                Transportation.clickedCube = gameObject;
-                Transportation.clickedCube.GetComponent<Renderer>().material.color = Color.red;
-                Transportation.clickedCube.transform.localScale += new Vector3(scaleX, scaleY, scaleZ);
+                Transportation.selectedCube = gameObject;
+                Transportation.selectedCube.GetComponent<Renderer>().material.color = Color.red;
+                Transportation.selectedCube.transform.localScale += new Vector3(scaleX, scaleY, scaleZ);
             }
         }
+        */
     }
 }
