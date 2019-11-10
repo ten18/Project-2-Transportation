@@ -38,21 +38,33 @@ public class CubeController : MonoBehaviour
             }
         }
 
-        /* Teleporter Code
+        // Space-by-Space Code
         else // if you don't click on the airplane...
         {
             if (activePlane)
             {
-                Transportation.selectedCube.GetComponent<Renderer>().material.color = Color.white;
-                Transportation.depotCube.GetComponent<Renderer>().material.color = Color.black;
-                Transportation.selectedCube.transform.localScale -= new Vector3(scaleX, scaleY, scaleZ);
-                Transportation.airplaneX = myX;
-                Transportation.airplaneY = myY;
-                Transportation.selectedCube = gameObject;
-                Transportation.selectedCube.GetComponent<Renderer>().material.color = Color.red;
-                Transportation.selectedCube.transform.localScale += new Vector3(scaleX, scaleY, scaleZ);
+                Transportation.destinationX = myX;
+                Transportation.destinationY = myY;
+                Transportation.destination = gameObject;
+                //print("Destination is " + (Transportation.destinationX + 1) + ", " + (Transportation.destinationY + 1));
             }
         }
-        */
+
+        /* Teleporter Code (keeping as comment for future reference)
+       else // if you don't click on the airplane...
+       {
+           if (activePlane)
+           {
+               Transportation.selectedCube.GetComponent<Renderer>().material.color = Color.white;
+               Transportation.depotCube.GetComponent<Renderer>().material.color = Color.black;
+               Transportation.selectedCube.transform.localScale -= new Vector3(scaleX, scaleY, scaleZ);
+               Transportation.airplaneX = myX;
+               Transportation.airplaneY = myY;
+               Transportation.selectedCube = gameObject;
+               Transportation.selectedCube.GetComponent<Renderer>().material.color = Color.red;
+               Transportation.selectedCube.transform.localScale += new Vector3(scaleX, scaleY, scaleZ);
+           }
+       }
+       */
     }
 }

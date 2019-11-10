@@ -1,17 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Transportation : MonoBehaviour
 {
     //public static GameObject selectedCube;  irrelevant to the code at this point, keeping for reference
     public static GameObject depotCube; // the delivery depot, stationary
+    public static GameObject destination;
     public GameObject cubePrefab;
+    public Text infoText;
     Vector3 cubePos;
     public static GameObject[,] grid;
     public int length, height; // dimensions of play area
     public static int airplaneX, airplaneY;
     public static int depotX, depotY;
+    public static int destinationX, destinationY;
     public static float goNow;
     public static float turnLength; // how long each turn lasts, works in tandem with goNow
     public int airplaneCargo;
@@ -33,31 +37,122 @@ public class Transportation : MonoBehaviour
         airplaneCargo = 0;
     }
 
-    void ProcessKeyDown()
+    void PathFind() // find best direction for airplane to move next
     {
         {
-            if (Input.GetKeyDown(KeyCode.RightArrow))
+            // NORTH
+            if (destinationX == airplaneX && destinationY < airplaneY)
+            {
+                moveX = 0;
+                moveY = -1;
+            }
+
+            // SOUTH
+            if (destinationX == airplaneX && destinationY > airplaneY)
+            {
+                moveX = 0;
+                moveY = 1;
+            }
+
+            // EAST
+            if (destinationX > airplaneX && destinationY == airplaneY)
             {
                 moveX = 1;
                 moveY = 0;
             }
 
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            // WEST
+            if (destinationX < airplaneX && destinationY == airplaneY)
             {
                 moveX = -1;
                 moveY = 0;
             }
 
-            if (Input.GetKeyDown(KeyCode.DownArrow)) 
+            // SOUTHEAST
+            if (destinationX > airplaneX && destinationY > airplaneY)
             {
-                moveX = 0;
-                moveY = 1; // positive for down (and negative for up) because coord system starts in upper left
+                if ((destinationX - airplaneX) == (destinationY - airplaneY))
+                {
+                    moveX = 1;
+                    moveY = 1;
+                }
+                if ((destinationX - airplaneX) > (destinationY - airplaneY))
+                {
+                    moveX = 1;
+                    moveY = 0;
+                }
+                if ((destinationX - airplaneX) < (destinationY - airplaneY))
+                {
+                    moveX = 0;
+                    moveY = 1; // positive for down (and negative for up) because coord system starts in upper left
+                }
             }
 
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            // NORTHEAST
+            if (destinationX > airplaneX && destinationY < airplaneY)
+            {
+                if ((destinationX - airplaneX) == (airplaneY - destinationY))
+                {
+                    moveX = 1;
+                    moveY = -1;
+                }
+                if ((destinationX - airplaneX) > (airplaneY - destinationY))
+                {
+                    moveX = 1;
+                    moveY = 0;
+                }
+                if ((destinationX - airplaneX) < (airplaneY - destinationY))
+                {
+                    moveX = 0;
+                    moveY = -1;
+                }
+            }
+
+            // NORTHWEST
+            if (destinationX < airplaneX && destinationY < airplaneY)
+            {
+                if ((airplaneX - destinationX) == (airplaneY - destinationY))
+                {
+                    moveX = -1;
+                    moveY = -1;
+                }
+                if ((airplaneX - destinationX) > (airplaneY - destinationY))
+                {
+                    moveX = -1;
+                    moveY = 0;
+                }
+                if ((airplaneY - destinationY) > (airplaneX - destinationX))
+                {
+                    moveX = 0;
+                    moveY = -1;
+                }
+            }
+
+            // SOUTHWEST
+            if (destinationX < airplaneX && destinationY > airplaneY)
+            {
+                if ((airplaneX - destinationX) == (destinationY - airplaneY))
+                {
+                    moveX = -1;
+                    moveY = 1;
+                }
+                if ((airplaneX - destinationX) > (destinationY - airplaneY))
+                {
+                    moveX = -1;
+                    moveY = 0;
+                }
+                if ((airplaneX - destinationX) < (destinationY - airplaneY))
+                {
+                    moveX = 0;
+                    moveY = 1;
+                }
+            }
+
+            // STOP
+            if (destinationX == airplaneX && destinationY == airplaneY)
             {
                 moveX = 0;
-                moveY = -1;
+                moveY = 0;
             }
         }
     }
@@ -103,13 +198,14 @@ public class Transportation : MonoBehaviour
         }
 
         // movement will not be continuous, so reset and wait for next input
-        moveX = 0;
-        moveY = 0;
+        //moveX = 0;
+        //moveY = 0;
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        infoText.text = "Cargo: " + airplaneCargo + "/90 " + "Score: " + score;
         turnLength = 1.5f;
         goNow = turnLength;
         length = 16;
@@ -140,6 +236,11 @@ public class Transportation : MonoBehaviour
         depotY = 8;
         depotCube = grid[depotX, depotY];
         depotCube.GetComponent<Renderer>().material.color = Color.black;
+
+        // destination is not set yet, but ready to be set
+        destination = grid[destinationX, destinationY];
+
+        // airplane is not moving yet
         moveX = 0;
         moveY = 0;
     }
@@ -147,8 +248,7 @@ public class Transportation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        ProcessKeyDown();
+        PathFind();
         
         if (Time.time > goNow)
         {
@@ -168,8 +268,7 @@ public class Transportation : MonoBehaviour
                 DeliverCargo();
             }
 
-            print("Airplane cargo: " + airplaneCargo + "/90 tons");
-            print("Score: " + score);
+            infoText.text = "Cargo: " + airplaneCargo + "/90 " + "Score: " + score;
         }
     }
 }
